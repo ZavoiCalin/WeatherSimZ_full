@@ -26,11 +26,9 @@ int thresholdValue = 600;
 void displayData(int val){
   Serial.print(val);
   Serial.print(",");
-  Serial.print("\n");
   
   MyBlue.write(val);
   MyBlue.write(",");
-  MyBlue.write("\n");
   
   delay(1000);
 }
@@ -74,21 +72,23 @@ void loop() {
  
   
   int chk = DHT.read11(DHT11_PIN);
+  /*
   switch (chk)
   {
     case DHTLIB_OK:  
-        //Serial.print("OK,\t");
+        Serial.print("OK,\t");
         break;
     case DHTLIB_ERROR_CHECKSUM:
-        //Serial.print("Checksum error,\t");
+        Serial.print("Checksum error,\t");
         break;
     case DHTLIB_ERROR_TIMEOUT:
-        //Serial.print("Time out error,\t");
+        Serial.print("Time out error,\t");
         break;
     default:
-        //Serial.print("Unknown error,\t");
+        Serial.print("Unknown error,\t");
         break;
   }
+  */
   
   displayData(DHT.humidity);
   
@@ -110,8 +110,9 @@ void loop() {
   //Serial.print("Raindrop value = ");
   displayData(rainValue);
 
-  displayData(abs(bmp.readPressure())); //displaying the Pressure in hPa, you can change the unit
-  
+  displayData(bmp.readPressure()/100); //displaying the Pressure in hPa, you can change the unit
+  Serial.print("\n");
+  MyBlue.write("\n");
   /*
   if(sensorValue > thresholdValue-200 && sensorValue < thresholdValue){
     strcpy(r_status, "Raindrop status - It's wet");
