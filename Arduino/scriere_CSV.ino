@@ -1,4 +1,11 @@
-//#include <dht.h>
+/* 4/18 18/4
+ Soil Moisture Sensor  
+ modified on 21 Feb 2019 
+ by Saeed Hosseini @ Electropeak 
+ https://electropeak.com/learn/ 
+*/
+
+#include <dht.h>
 #include <SoftwareSerial.h>
 
 #include <SPI.h>
@@ -6,7 +13,7 @@
 
 #include <Adafruit_Sensor.h>
 
-//#include <Adafruit_BMP280.h>
+#include <Adafruit_BMP280.h>
 
 Adafruit_BMP280 bmp; // I2C Interface
 
@@ -16,30 +23,18 @@ dht DHT;
  
 #define DHT11_PIN 13
 #define SensorPin A0 
-
 float sensorValue = 0, moisture_percentage;
 
 int rainPin = A3;
 
+// you can adjust the threshold value
 int thresholdValue = 600;
-
-void displayData(int val){
-  Serial.print(val);
-  Serial.print(",");
-  Serial.print("\n");
-  
-  MyBlue.write(val);
-  MyBlue.write(",");
-  MyBlue.write("\n");
-  
-  delay(1000);
-}
 
 void setup() {
   
  Serial.begin(9600); 
   MyBlue.begin(9600);  //Baud Rate for AT-command Mode. 
-  Serial.println("**AT-command Mode**");
+  Serial.println("**AT commands mode**");
   delay(1000);
  pinMode(rainPin, INPUT);
   //Serial.println("DHT TEST PROGRAM ");
@@ -59,8 +54,7 @@ void setup() {
                   Adafruit_BMP280::FILTER_X16,      /* Filtering. */
                   Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
   
-}
- 
+} 
 void loop() { 
   //from bluetooth to Terminal. 
  if (MyBlue.available()) 
@@ -68,7 +62,14 @@ void loop() {
  //from termial to bluetooth 
  if (Serial.available()) 
    MyBlue.write(Serial.read());
-  
+  /*
+ for (int i = 0; i < 100; i++) 
+ { 
+   sensorValue = sensorValue + analogRead(SensorPin); 
+   delay(1); 
+ } */
+ //sensorValue = sensorValue/100.0;
+ 
    // READ DATA
   //Serial.print("DHT11, \t");
  
@@ -89,28 +90,56 @@ void loop() {
         //Serial.print("Unknown error,\t");
         break;
   }
+  // DISPLAY DATA
+  Serial.print(DHT.humidity, 1);
+  Serial.print(",");
   
-  displayData(DHT.humidity);
+  MyBlue.write(DHT.humidity);
+  MyBlue.write(",");
   
-  displayData(DHT.temperature);
+  delay(1000);
+  
+  Serial.print(DHT.temperature, 1);
+  Serial.print(",");
+  
+  MyBlue.write(DHT.temperature);
+  MyBlue.write(",");
+ 
+  delay(1000);
  
  
  moisture_percentage = ( 100.0 - ( (analogRead(SensorPin)/1023.00) * 100.0 ) ); 
-
- moisture_percentage = moisture_percentage * 100;
- 
- 
  //Serial.print("Soil moisture percentage: ");
- displayData((int)moisture_percentage);
+ Serial.print(moisture_percentage); 
+ Serial.print(",");
+ 
+ MyBlue.write(moisture_percentage);
+ MyBlue.write(",");
+ 
+ delay(1000); 
  
  // read the input on analog pin 0:
-  int rainValue = analogRead(rainPin);
+  int sensorValue = analogRead(rainPin);
   char r_status[50];
-  
   //Serial.print("Raindrop value = ");
-  displayData(rainValue);
-
-  displayData((int)bmp.readPressure()); //displaying the Pressure in hPa, you can change the unit
+  Serial.print(sensorValue);
+  Serial.print(",");
+  
+  MyBlue.write(sensorValue);
+  MyBlue.write(",");
+  
+  delay(1000);
+  
+  Serial.print(bmp.readPressure()/100); //displaying the Pressure in hPa, you can change the unit
+  Serial.print(",");
+  Serial.print("\n");
+  
+  MyBlue.write(bmp.readPressure()/100);
+  MyBlue.write(",");
+  MyBlue.write("\n"); 
+  
+  delay(1000);
+  
   
   /*
   if(sensorValue > thresholdValue-200 && sensorValue < thresholdValue){
@@ -147,3 +176,6 @@ void loop() {
   Serial.println(final_status);
   */
 } 
+
+
+
