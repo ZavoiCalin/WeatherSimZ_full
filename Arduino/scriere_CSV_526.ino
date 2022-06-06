@@ -10,7 +10,7 @@
 
 Adafruit_BMP280 bmp; // I2C Interface
 
-SoftwareSerial MyBlue(2,3); // RX | TX 
+SoftwareSerial MyBlue(2, 3); // RX | TX 
 
 dht DHT;
  
@@ -23,11 +23,15 @@ int rainPin = A3;
 
 int thresholdValue = 600;
 
-void displayData(int val){
-  Serial.print(val);
-  Serial.print(",");
+void sendRawData(int val){
   
-  MyBlue.write(val);
+  char sItoa[50];
+  itoa(val, sItoa, 10);
+  
+  Serial.write(sItoa);
+  Serial.write(",");
+  
+  MyBlue.write(sItoa);
   MyBlue.write(",");
   
   delay(1000);
@@ -90,9 +94,9 @@ void loop() {
   }
   */
   
-  displayData(DHT.humidity);
+  sendRawData(DHT.humidity);
   
-  displayData(DHT.temperature);
+  sendRawData(DHT.temperature);
  
  
  moisture_percentage = ( 100.0 - ( (analogRead(SensorPin)/1023.00) * 100.0 ) ); 
@@ -101,18 +105,42 @@ void loop() {
  
  
  //Serial.print("Soil moisture percentage: ");
- displayData((int)moisture_percentage);
+ sendRawData((int)moisture_percentage);
  
  // read the input on analog pin 0:
   int rainValue = analogRead(rainPin);
   char r_status[50];
   
   //Serial.print("Raindrop value = ");
-  displayData(rainValue);
+  sendRawData(rainValue);
 
-  displayData(bmp.readPressure()/100); //displaying the Pressure in hPa, you can change the unit
-  Serial.print("\n");
-  MyBlue.write("\n");
+  int pressure = bmp.readPressure()/100; //displaying the pressure in hPa
+  int altitude = bmp.readAltitude();
+
+  sendRawData(pressure); 
+  sendRawData(altitude);
+  
+  //functioneaza asa trebuie sa trimit
+  /*
+  char incerc[50];
+  
+  strcpy(incerc, "420");
+  
+  sendRawData(incerc);   
+  */ 
+  
+  //functioneaza cu wrapper
+  /*
+  int n = 420;
+  String sWrapper = String(n);
+  char sArray[50];
+  
+  sWrapper.toCharArray(sArray, 50);
+  sendRawData(sArray);
+  */
+  
+  //functioneaza cu itoa
+  
   /*
   if(sensorValue > thresholdValue-200 && sensorValue < thresholdValue){
     strcpy(r_status, "Raindrop status - It's wet");
@@ -147,4 +175,7 @@ void loop() {
   
   Serial.println(final_status);
   */
+  
+  Serial.write("\n");
+  MyBlue.write("\n");
 } 
