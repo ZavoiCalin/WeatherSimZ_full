@@ -23,18 +23,35 @@ int rainPin = A3;
 
 int thresholdValue = 600;
 
+int n, dataArray[6];
+
 void sendRawData(int val){
   
-  char sItoa[50];
-  itoa(val, sItoa, 10);
+  dataArray[n] = val;
+  n++;
+}
+
+void sendToTerminal(){
+  char sItoa[10];
   
-  Serial.write(sItoa);
-  Serial.write(",");
+  for(int i = 0; i < n; i++){
+    itoa(dataArray[i], sItoa, 10);
   
-  MyBlue.write(sItoa);
-  MyBlue.write(",");
+    Serial.write(sItoa);
+    Serial.write(",");
   
-  delay(1000);
+    MyBlue.write(sItoa);
+    MyBlue.write(",");
+    
+    }
+    
+    Serial.write("\n");
+    MyBlue.write("\n");
+    
+    n=0;
+  
+    delay(1000);
+  
 }
 
 void setup() {
@@ -141,41 +158,8 @@ void loop() {
   
   //functioneaza cu itoa
   
-  /*
-  if(sensorValue > thresholdValue-200 && sensorValue < thresholdValue){
-    strcpy(r_status, "Raindrop status - It's wet");
-  }
   
-  if(sensorValue <= thresholdValue-200){
-    strcpy(r_status, "Raindrop status - It's way too wet");
-  }
+
   
-  if(sensorValue > thresholdValue+300){
-    strcpy(r_status, "Raindrop status - It's way too dry");
-  }
-   
-   if(sensorValue>= thresholdValue && sensorValue <= thresholdValue+300) {
-    strcpy(r_status,"Raindrop status - It's dry");
-  }
-  
-  
-  Serial.print(r_status);
-  Serial.print(",");
-  
-  delay(1000);
-  */
-  
-  /*
-  char final_status[50];
-  
-  if(DHT.humidity>50.0 && DHT.temperature>24.0 && moisture_percentage<40.0 && strcmp(r_status, "Raindrop status - It's way too dry")==0){
-    strcpy(final_status, "Irrigation needed");
-  }
-  else strcpy(final_status, "Irrigation not needed");
-  
-  Serial.println(final_status);
-  */
-  
-  Serial.write("\n");
-  MyBlue.write("\n");
+  sendToTerminal();
 } 
