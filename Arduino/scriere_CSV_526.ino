@@ -136,6 +136,9 @@ void loop() {
 
   sendRawData(pressure); 
   sendRawData(altitude);
+ 
+ 
+  sendToTerminal();
   
   //functioneaza asa trebuie sa trimit
   /*
@@ -161,5 +164,4 @@ void loop() {
   
 
   
-  sendToTerminal();
 } 
