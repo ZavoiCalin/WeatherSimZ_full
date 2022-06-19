@@ -131,14 +131,11 @@ void loop() {
   //Serial.print("Raindrop value = ");
   sendRawData(rainValue);
 
-  int pressure = bmp.readPressure()/100; //displaying the pressure in hPa
-  int altitude = bmp.readAltitude();
+  int pressure = bmp.readPressure()*10; //displaying the pressure in dPa
+  int altitude = bmp.readAltitude()*10; //dm
 
   sendRawData(pressure); 
   sendRawData(altitude);
- 
- 
-  sendToTerminal();
   
   //functioneaza asa trebuie sa trimit
   /*
@@ -164,4 +161,5 @@ void loop() {
   
 
   
+  sendToTerminal();
 } 
