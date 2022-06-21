@@ -38,10 +38,10 @@ void sendToTerminal(){
     itoa(dataArray[i], sItoa, 10);
   
     Serial.write(sItoa);
-    Serial.write(" ");
+    Serial.write(",");
   
     MyBlue.write(sItoa);
-    MyBlue.write(" ");
+    MyBlue.write(",");
    
     }
     
