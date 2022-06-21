@@ -34,18 +34,23 @@ void sendRawData(int val){
 void sendToTerminal(){
   char sItoa[10];
   
-  for(int i = 0; i < n; i++){
+  for(int i = 0; i < n-1; i++){
     itoa(dataArray[i], sItoa, 10);
   
     Serial.write(sItoa);
-    Serial.write(",");
+    Serial.write(" ");
   
     MyBlue.write(sItoa);
-    MyBlue.write(",");
-    
+    MyBlue.write(" ");
+   
     }
     
+    itoa(dataArray[n-1], sItoa, 10);
+    
+    Serial.write(sItoa);
     Serial.write("\n");
+    
+    MyBlue.write(sItoa);
     MyBlue.write("\n");
     
     n=0;
@@ -125,8 +130,8 @@ void loop() {
  sendRawData((int)moisture_percentage);
  
  // read the input on analog pin 0:
-  int rainValue = analogRead(rainPin);
-  char r_status[50];
+  int rainValue = ( 100 - ((analogRead(rainPin)/1023.00) * 100));
+  //char r_status[50];
   
   //Serial.print("Raindrop value = ");
   sendRawData(rainValue);
@@ -136,6 +141,8 @@ void loop() {
 
   sendRawData(pressure); 
   sendRawData(altitude);
+  
+  sendToTerminal();
   
   //functioneaza asa trebuie sa trimit
   /*
@@ -161,5 +168,5 @@ void loop() {
   
 
   
-  sendToTerminal();
+  
 } 
